@@ -1,0 +1,206 @@
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <script src="/games/js/app.mix.js"></script>
+    <script src="/games/js/gamelib.mix.js"></script>
+    <script language="javascript" type="text/javascript" defer="true">
+    	
+    	var font;
+    	var vehicles = [];
+
+    	function preload() {
+    	  font = loadFont('/fonts/Lalezar-Regular.otf');
+    	}
+
+    	function setup() {
+    	  createCanvas(window.innerWidth - 10, 300);
+    	  background(51);
+    	  // textFont(font);
+    	  // textSize(192);
+    	  // fill(255);
+    	  // noStroke();
+    	  // text('train', 100, 200);
+    	}
+
+    	function draw() {
+    	  background(51);
+    	  for (var i = 0; i < vehicles.length; i++) {
+    	    var v = vehicles[i];
+    	    v.behaviors();
+    	    v.update();
+    	    v.show(i);
+    	  }
+    	}
+
+      function make(text) {
+        vehicles = [];
+        var points = font.textToPoints(text, 100, 200, 192, {
+          sampleFactor: 0.25
+        });
+
+        for (var i = 0; i < points.length; i++) {
+          var pt = points[i];
+          var vehicle = new Vehicle(pt.x, pt.y);
+          vehicles.push(vehicle);
+          // stroke(255);
+          // strokeWeight(8);
+          // point(pt.x, pt.y);
+        }
+
+        redraw();
+      }
+
+
+    	function Vehicle(x, y) {
+    	  this.pos = createVector(random(width), random(height));
+    	  this.target = createVector(x, y);
+    	  this.vel = p5.Vector.random2D();
+    	  this.acc = createVector();
+    	  this.r = 3;
+    	  this.maxspeed = 10;
+    	  this.maxforce = 1;
+    	}
+
+    	Vehicle.prototype.behaviors = function() {
+    	  var arrive = this.arrive(this.target);
+    	  var mouse = createVector(mouseX, mouseY);
+    	  var flee = this.flee(mouse);
+
+    	  arrive.mult(1);
+    	  flee.mult(5);
+
+    	  this.applyForce(arrive);
+    	  this.applyForce(flee);
+    	}
+
+    	Vehicle.prototype.applyForce = function(f) {
+    	  this.acc.add(f);
+    	}
+
+    	Vehicle.prototype.update = function() {
+    	  this.pos.add(this.vel);
+    	  this.vel.add(this.acc);
+    	  this.acc.mult(0);
+    	}
+
+    	Vehicle.prototype.show = function(i) {
+        i = i%255;
+        stroke(255 - i, i + 50, i);
+    	  // fill(color(i,i,i));
+        // fill(color(random(255),random(255),random(255)));
+    	  strokeWeight(this.r);
+        // noStroke();
+    	  // ellipseMode(CENTER);
+      	// // this.pos.x, this.pos.y, 4, 4);
+      	// var antX = this.pos.x;
+      	// var antY = this.pos.y;
+      	// var antC = 4; //change this variable to scale ant
+      	// var antL = antC * (2/3);
+
+       //  fill(0);
+        
+       //  //body
+       //  ellipse(antX-(antC*2),antY,antC,antC); //butt
+       //  ellipse(antX-antC,antY,antC,antC); //middle
+       //  ellipse(antX,antY,antC,antC); //head
+
+       //  //antenna
+       //  noFill();
+       //  arc(antX,antY-(antC/2),antC*1.5,antC,5.5,1);
+       //  arc(antX,antY+(antC/2),antC*1.5,antC,5.5,0.6);
+
+        
+       //  //straight butt leg
+       //  line(antX-(antC*2),antY+antC,antX-(antC*2),antY-antC);
+
+       //  //moving butt leg - forward slash
+       //  line(antX-(antC*2)-(antC/2),antY+antC,antX-(antC*2)+(antC/2),antY-antC);
+
+       //  //moving butt leg - back slash
+       //  line(antX-(antC*2)-(antC/2),antY-antC,antX-(antC*2)+(antC/2),antY+antC);
+
+       //  //straight middle leg
+       //  line(antX-antC,antY+antC,antX-antC,antY-antC);//middle leg
+      	
+       //  //moving middle - back slash
+       //  line(antX-(antC/2),antY+antC,antX-(antC*2)+(antC/2),antY-antC);
+
+       //  //moving middle - forward slash
+       //  line(antX-(antC*2)+(antC/2),antY+antC,antX-antC+(antC/2),antY-antC);
+    	  ellipse(this.pos.x, this.pos.y, 4, 4);
+    	}
+
+
+    	Vehicle.prototype.arrive = function(target) {
+    	  var desired = p5.Vector.sub(target, this.pos);
+    	  var d = desired.mag();
+    	  var speed = this.maxspeed;
+    	  if (d < 100) {
+    	    speed = map(d, 0, 100, 0, this.maxspeed);
+    	  }
+    	  desired.setMag(speed);
+    	  var steer = p5.Vector.sub(desired, this.vel);
+    	  steer.limit(this.maxforce);
+    	  return steer;
+    	}
+
+    	Vehicle.prototype.flee = function(target) {
+    	  var desired = p5.Vector.sub(target, this.pos);
+    	  var d = desired.mag();
+    	  if (d < 50) {
+    	    desired.setMag(this.maxspeed);
+    	    desired.mult(-1);
+    	    var steer = p5.Vector.sub(desired, this.vel);
+    	    steer.limit(this.maxforce);
+    	    return steer;
+    	  } else {
+    	    return createVector(0, 0);
+    	  }
+    	}
+	</script>
+    <style>
+      body {padding: 10px; margin: 0; width: 100%;}
+      .container {
+        margin: 0 auto;
+        padding: 10px;
+        text-align: center;
+      }
+
+      input {
+        width: 300px;
+        height: 30px;
+      }
+      button {
+        height: 30px;
+        width: 100px;
+        color: blue;
+        background-color: #bfbaba;
+        font-size: 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1> Play with words</h1>
+
+      <div id='from'>
+        <input type="text" name="in-text" id='text-input'>
+        <button id='sent-btn'>Play</button>
+      </div>
+    </div>
+
+  </body>
+  <script type="text/javascript">
+    $('body').on('click', '#sent-btn', function(){
+      make($('#text-input').val());
+    });
+
+    $('input').keypress(function(e) {
+        // Enter pressed?
+        if(e.which == 10 || e.which == 13) {
+            make($('#text-input').val());
+            $('#text-input').val('')
+        }
+    });
+  </script>
+</html>
