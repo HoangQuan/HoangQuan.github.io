@@ -991,7 +991,8 @@ p {
 
 .single-work {
   position: relative;
-  border: 1px solid blue; }
+  border: 1px solid blue;
+  height: 100%; }
   .single-work .work-image img {
     width: 100%; }
   .single-work .work-overlay {
