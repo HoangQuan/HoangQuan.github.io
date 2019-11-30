@@ -96,8 +96,10 @@ function draw() {
 		player.move(mouseX, mouseY);
 
 		maxAnt = player.level * maxAnt;
+		distance = distance - player.level;
 
-		if(ants.length == 0 || ((ants[ants.length - 1].x < width - distance) && random(1) < 0.01 && ants.length <= maxAnt)) {
+
+		if(ants.length == 0 || ((ants[ants.length - 1].x < width - distance) && random(1) < 0.01*player.level && ants.length <= maxAnt)) {
 			var  ran = [0, w][Math.floor(Math.random()*2)];
 			
 			if(player.level < 5) {
