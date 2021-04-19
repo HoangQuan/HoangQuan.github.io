@@ -1,0 +1,246 @@
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <script src="https://hoangquan.github.io/games/js/gamelib.mix.js"></script>
+    <style>
+      body {padding: 10px; margin: 0; width: 100%;}
+      .game-body {
+        display: flex;
+        justify-content: center;
+      }
+      .text-center {
+        text-align: center;
+      }
+    </style>
+    <script type="text/javascript">
+      var grid, colors = [];
+      var cols = 4;
+      var rows = 4;
+      var selectedGrid = [];
+      var comparing = false;
+      var cell_width = 180;
+      var cl, bg_image;
+      var cl_index = 0;
+      var correct = 0;
+      var wrong = 0;
+      var timer = 120;
+      var bg_images = [
+        // 'https://gamek.mediacdn.vn/133514250583805952/2021/4/7/photo-1-16177858368971112504137.jpg',
+        // 'https://cdn.24h.com.vn/upload/2-2021/images/2021-04-16/174762435_456213458795329_2978113140212124092_n-1618547373-3-width1242height1350.jpg',
+        // 'https://cdn.24h.com.vn/upload/2-2021/images/2021-04-16/154580511_430155481648455_5669257803697343778_n-1614246171-856-width1242height1558-1618547492-477-width1242height1558.jpg',
+        // 'https://cdn.24h.com.vn/upload/2-2021/images/2021-04-06/3-1617677693-439-width650height700.jpg'
+        'https://genk.mediacdn.vn/2018/10/15/1-1539617553273324235553.jpg'
+      ];
+
+      function preload() {
+        bg_image = loadImage(bg_images[Math.floor(Math.random() * bg_images.length)]);
+        for (var i = 0; i < (cols*rows)/2; i++) {
+          var item = {label: Math.floor(Math.random() * 1000), image: loadImage("https://source.unsplash.com/featured/featured?animals" + (i*10))};
+          colors.push(item);
+        };
+        colors = colors.concat(colors);
+        colors = colors.sort(() => Math.random() - 0.5);
+      }
+      function setup() {
+        var cnv = createCanvas(cols*cell_width + 200, rows*cell_width);
+        cnv.parent('game_area');
+        cnv.mousePressed(playMousePressed);
+        grid = make2DArray(cols, rows);
+        
+        for (var i = 0; i < cols; i++) {
+          for (var j = 0; j < rows; j++) {
+            grid[i][j] = new Cell(i, j, cell_width, colors[cl_index]);
+            cl_index += 1;
+          }
+        }
+
+      };
+      function draw() {
+        background(0);
+        if(timer <= 0) { // || correct == cols*rows/2
+          textSize(40);
+          if(timer <= 0) {
+            text("Game Over!!!!", width/2 - textWidth('Game Over!!!!')/2, height/2 - 50);
+          }
+
+          textSize(40);
+          text("Try again", width/2 - 100, height/2);
+
+          if (isMouseInsideText('Try again', width/2 - textWidth('Try again')/2, height/2)) {
+            push();
+            cursor(HAND);
+            fill(0, 200, 255);
+            stroke(0, 200, 255);
+            pop();
+          } else {
+            push();
+            cursor(ARROW);
+            fill(255);
+            stroke(255);
+            pop();
+          }
+        } else {
+          if (frameCount % 60 == 0 && timer > 0 && correct < cols*rows/2) { // if the frameCount is divisible by 60, then a second has passed. it will stop at 0
+              timer --;
+          }
+
+          if (correct == cols*rows/2) {
+            textSize(20);
+            text("Restart", cols*cell_width + 80, height - 50);
+          }
+
+          fill(255);
+          textSize(15);
+
+          text("Thời gian: " + timer, cols*cell_width + 30, 30);
+          text("Đúng: " + correct, cols*cell_width + 30, 50);
+          text("Sai: " + wrong, cols*cell_width + 30, 70);
+
+          image(bg_image, 0, 0, cols*cell_width, rows*cell_width);
+          for (var i = 0; i < cols; i++) {
+            for (var j = 0; j < rows; j++) {
+              grid[i][j].show();
+            }
+          }
+        }
+      };
+
+      function playMousePressed() {
+        if(!comparing) {
+          for (var i = 0; i < cols; i++) {
+            for (var j = 0; j < rows; j++) {
+              if(grid[i][j].status == 1 && grid[i][j].touched(mouseX, mouseY)) {
+                grid[i][j].status = 2;
+                selectedGrid.push({i: i, j: j, label: grid[i][j].color.label});
+
+                if(selectedGrid.length == 2) {
+                  comparing = true;
+                  setTimeout(() => {
+                    try{
+                      if(selectedGrid[0].label == selectedGrid[1].label) {
+                        grid[selectedGrid[0].i][selectedGrid[0].j].status = 3;
+                        grid[selectedGrid[1].i][selectedGrid[1].j].status = 3;
+                        selectedGrid = [];
+                        correct += 1;
+                        comparing = false;
+                      } else {
+                        comparing = false;
+                        grid[selectedGrid[0].i][selectedGrid[0].j].status = 1;
+                        grid[selectedGrid[1].i][selectedGrid[1].j].status = 1;
+                        wrong += 1;
+                        selectedGrid = [];
+                      }
+                    } catch (error) {
+                      console.log(error);
+                      comparing = false;
+                      selectedGrid = [];
+                    }
+                  }, 1000)
+                }
+              }
+            }
+          }
+        }
+      }
+
+      function mouseClicked() {
+        if (isMouseInsideText("Try again", width/2 - 100, height/2) && timer <= 0) {
+          restartGame();
+        }
+
+        if(isMouseInsideText("Restart", cols*cell_width + 80, height - 50) && correct == cols*rows/2) {
+          restartGame();
+        }
+      }
+
+      function restartGame() {
+        bg_image = loadImage(bg_images[Math.floor(Math.random() * bg_images.length)]);
+        wrong = 0;
+        correct = 0;
+        timer = 60;
+        grid = make2DArray(cols, rows);
+        colors = [];
+        cl_index = 0;
+        selectedGrid = [];
+        for (var i = 0; i < (cols*rows)/2; i++) {
+          var item = {label: Math.floor(Math.random() * 10), color: color(random(255), random(255), random(255))}
+          colors.push(item);
+        };
+
+        colors = colors.concat(colors);
+        colors = colors.sort(() => Math.random() - 0.5);
+
+        for (var i = 0; i < cols; i++) {
+          for (var j = 0; j < rows; j++) {
+            grid[i][j] = new Cell(i, j, cell_width, colors[cl_index]);
+            cl_index += 1;
+          }
+        }
+        redraw();
+      }
+
+      function isMouseInsideText(message, messageX, messageY) {
+        const messageWidth = textWidth(message);
+        const messageTop = messageY - textAscent();
+        const messageBottom = messageY + textDescent();
+
+        return mouseX > messageX && mouseX < messageX + messageWidth &&
+          mouseY > messageTop && mouseY < messageBottom;
+      }
+
+      function make2DArray(cols, rows) {
+        var arr = new Array(cols);
+        for (var i = 0; i < arr.length; i++) {
+          arr[i] = new Array(rows);
+        }
+        return arr;
+      };
+
+      class Cell {
+        constructor(x, y, size, color) {
+          this.i = x;
+          this.j = y;
+          this.x = x * (size);
+          this.y = y * (size);
+          this.size = size;
+          this.color = color;
+          this.status = 1; // 1 hiden, 2 taken, 3 eaten
+        }
+
+        show() {
+          if(this.status < 3) {
+            fill(255);
+            rect(this.x, this.y, this.size, this.size);
+            // push()
+            if(this.status == 2){
+              // fill(this.color.color);
+              // textAlign(CENTER);
+              // fill(this.color.color);
+              // textSize(this.size / 2);
+              // text(this.color.label, this.x + this.size * 0.5, this.y + this.size - 60);
+              image(this.color.image, this.x, this.y, this.size, this.size);
+            } else if (this.status == 1){
+              // image(this.color.image, this.x, this.y, this.size, this.size);
+              fill("#fff");
+            }
+            // pop();
+          }
+        }
+
+        touched(x, y) {
+          return (x > this.x && x < this.x + this.size && y > this.y && y < this.y + this.size);
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div class="game-header">
+        <h2 class="text-center">Memmories Game for KIDS</h2>
+        <h4 class="text-center">Chọn 2 ô có màu trùng nhau nhé các bé </h4>
+    </div>
+    <div class="game-body">
+      <div id="game_area"></div>
+    </div>
+  </body>
+</html>
+

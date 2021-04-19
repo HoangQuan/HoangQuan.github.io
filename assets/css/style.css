@@ -1759,4 +1759,26 @@ p.form-message.success, p.form-message.error {
       line-height: 54px;
       cursor: pointer; }
 
+
+.large {
+  width:51px;
+  height:51px;
+}
+.dull {
+  filter: brightness(0.5);
+}
+.shiny {
+  filter: brightness(1.5);
+}
+
+.butterfly {
+  top: -18px;
+  left: 211px;
+  width: 51px;
+  transform: rotate(-31deg);
+  position: absolute;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-image: url('http://www.animatedimages.org/data/media/291/animated-butterfly-image-0018.gif');
+}
 /*# sourceMappingURL=style.css.map */
