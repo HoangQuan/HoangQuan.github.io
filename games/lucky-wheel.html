@@ -1,0 +1,226 @@
+
+<html>
+    <head>
+        <title>QuanHV's Lucky Wheel</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js" integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="http://profile.icitech.net/js/Winwheel.js"></script>
+        <script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/latest/TweenMax.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/js/tabler.min.js"></script>
+
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/css/tabler.min.css">
+        <style type="text/css">
+          /*body
+          {
+              font-family: arial;
+              background-image: url(https://i0.wp.com/hoasenhomes.vn/wp-content/uploads/2022/03/download-de-che.jpg?resize=730%2C430&ssl=1);
+              background-size: cover;
+              background-position: center;
+              background-repeat: none;
+          }*/
+
+          /* Sets the background image for the wheel */
+          .the_wheel
+          {
+              background-image: url(http://profile.sudobo.com/wheel_back.png);
+              background-position: center;
+              background-repeat: none;
+          }
+
+          .wheel-pointer {
+              width: 60px;
+              height: 60px;
+              border-radius: 1000px;
+              background: #f90000;
+              position: absolute;
+              left: 50%;
+              top: 50%;
+              transform: translate(-50%, -50%);
+              text-align: center;
+              line-height: 60px;
+              z-index: 10;
+              font-size: 20px;
+              cursor: pointer;
+              color: #ffffff;
+          }
+
+          .wheel-pointer::after {
+              content: "";
+              position: absolute;
+              top: -32px;
+              left: 50%;
+              border-width: 0 8px 40px;
+              border-style: solid;
+              border-color: transparent transparent #f90000;
+              transform: translateX(-50%);
+          }
+
+          /* Do some css reset on selected elements */
+          h1, p
+          {
+              margin: 0;
+          }
+
+          .center {
+            text-align: center;
+          }
+
+          div.power_controls
+          {
+              margin-right:70px;
+          }
+
+          div.html5_logo
+          {
+              margin-left:70px;
+          }
+
+          /* Styles for the power selection controls */
+          table.power
+          {
+              background-color: #cccccc;
+              cursor: pointer;
+              border:1px solid #333333;
+          }
+
+          table.power th
+          {
+              background-color: white;
+              cursor: default;
+          }
+
+          td.pw1
+          {
+              background-color: #6fe8f0;
+          }
+
+          td.pw2
+          {
+              background-color: #86ef6f;
+          }
+
+          td.pw3
+          {
+              background-color: #ef6f6f;
+          }
+
+          /* Style applied to the spin button once a power has been selected */
+          .clickable
+          {
+              cursor: pointer;
+          }
+
+          /* Other misc styles */
+          .margin_bottom
+          {
+              margin-bottom: 5px;
+          }
+
+          .only-wheel-area {
+            margin-top: 20px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+
+          @media only screen and (max-width: 600px) {
+            .only-wheel-area canvas {
+              width: 95%;
+            }
+          }
+
+        </style>
+    </head>
+    <body>
+        <div class="page-wrapper">
+          <div class="container">
+            <div class="row align-items-center center">
+                <h1>QuanHV's Lucky Wheel</h1>
+                <p>Thử vận may của bạn bằng cách nhấn nút Play</p>
+                <br />
+                <p>Để cài đặt - Bấm vào <a href="" id="settingWheel">Đây</a></p>
+                <br />
+            </div>
+          </div>
+          <div class="page-body">
+            <div class="container">
+              <div class="row row-deck row-cards">
+                <div class="row">
+                  <div class="col-12 " id="setting-area">
+                    <table class="card-table table-responsive">
+                      <tr>
+                          <td>
+                              <div class="power_controls" style="display: none;">
+                                  <br />
+                                  <br />
+                                  <table class="power" cellpadding="10" cellspacing="0">
+                                      <tr>
+                                          <th align="center">Power</th>
+                                      </tr>
+                                      <tr>
+                                          <td width="78" align="center" id="pw3" onClick="powerSelected(3);">High</td>
+                                      </tr>
+                                      <tr>
+                                          <td align="center" id="pw2" onClick="powerSelected(2);">Med</td>
+                                      </tr>
+                                      <tr>
+                                          <td align="center" id="pw1" onClick="powerSelected(1);">Low</td>
+                                      </tr>
+                                  </table>
+                                  <br />
+                                  
+                              </div>
+                          </td>
+                      </tr>
+                    </table>
+                    <div id='options-select'>
+                      
+                    </div>
+                    <div id='action'>
+                      <div class="form-group row mt-3">
+                        <div class="col">
+                          <button class="btn btn-primary" id="settingSave">Save</button>
+                        </div>
+                        <div class="col">
+                          <button class="btn btn-info" id="settingAdd">+ Item</button>
+                        </div>
+                        <div class="col">
+                          <button class="btn btn-danger" id="settingCancel">Cancel</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-12 center justify-content-center" id="wheel-area">
+                    <div class="only-wheel-area">
+                      <div id='spin_button' class="wheel-pointer" onClick="startSpin();">
+                        Start
+                      </div>
+                      <canvas id="canvas" width="434" height="434" class="">
+                          <p style="{color: white}" align="center">Sorry, your browser doesn't support canvas. Please try another.</p>
+                      </canvas>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <footer class="fixed center">
+          <h4>Make by <a href="https://quanhv.com" target="_blank">QuanHV</a> with &#x1F49D;</h4>
+
+          <audio controls="" id="nhacsoso" loop="" preload="none" src="https://thegioinhacchuong.com/files/xo-so-mien-bac.mp3" style="display: none;"></audio>
+          <audio controls="" id="nhacchucmung" loop="" preload="none" src="http://nhacchuongvui.com/download-file?files=748.747" style="display: none;"></audio>
+        </footer>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+        <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+        <script>
+          var _0x8ed9=["\x68\x69\x64\x65","\x23\x73\x65\x74\x74\x69\x6E\x67\x2D\x61\x72\x65\x61","\x23\x65\x61\x65\x35\x36\x66","\x4C\u1EF1\x61\x20\x63\x68\u1ECD\x6E\x20\x31","\x23\x38\x39\x66\x32\x36\x65","\x4C\u1EF1\x61\x20\x63\x68\u1ECD\x6E\x20\x32","\x23\x37\x64\x65\x36\x65\x66","\x4C\u1EF1\x61\x20\x63\x68\u1ECD\x6E\x20\x33","\x23\x65\x37\x37\x30\x36\x66","\x4C\u1EF1\x61\x20\x63\x68\u1ECD\x6E\x20\x34","\x4C\u1EF1\x61\x20\x63\x68\u1ECD\x6E\x20\x35","\x4C\u1EF1\x61\x20\x63\x68\u1ECD\x6E\x20\x36","\x4C\u1EF1\x61\x20\x63\x68\u1ECD\x6E\x20\x37","\x4C\u1EF1\x61\x20\x63\x68\u1ECD\x6E\x20\x38","\x6E\x68\x61\x63\x73\x6F\x73\x6F","\x67\x65\x74\x45\x6C\x65\x6D\x65\x6E\x74\x42\x79\x49\x64","\x6E\x68\x61\x63\x63\x68\x75\x63\x6D\x75\x6E\x67","\x6D\x79\x5F\x73\x65\x67\x6D\x65\x6E\x74\x73","\x67\x65\x74\x49\x74\x65\x6D","\x70\x61\x72\x73\x65","\x73\x74\x72\x69\x6E\x67\x69\x66\x79","\x73\x65\x74\x49\x74\x65\x6D","\x6C\x65\x6E\x67\x74\x68","\x73\x70\x69\x6E\x54\x6F\x53\x74\x6F\x70","\x63\x6C\x61\x73\x73\x4E\x61\x6D\x65","\x70\x77\x31","","\x70\x77\x32","\x70\x77\x33","\x68\x74\x6D\x6C","\x73\x70\x69\x6E\x5F\x62\x75\x74\x74\x6F\x6E","\x50\x6C\x61\x79","\x63\x6C\x69\x63\x6B\x61\x62\x6C\x65","\x70\x6C\x61\x79","\x73\x70\x69\x6E\x73","\x61\x6E\x69\x6D\x61\x74\x69\x6F\x6E","\x69\x6E\x6E\x65\x72\x48\x54\x4D\x4C","\x52\x65\x73\x65\x74","\x73\x74\x61\x72\x74\x41\x6E\x69\x6D\x61\x74\x69\x6F\x6E","\x73\x74\x6F\x70\x41\x6E\x69\x6D\x61\x74\x69\x6F\x6E","\x72\x6F\x74\x61\x74\x69\x6F\x6E\x41\x6E\x67\x6C\x65","\x64\x72\x61\x77","\x74\x65\x78\x74","\x42\u1EA1\x6E\x20\u0111\xE3\x20\u0111\u01B0\u1EE3\x63\x20\x63\x68\u1ECD\x6E\x20","\x2E","\x73\x75\x63\x63\x65\x73\x73","\x70\x61\x75\x73\x65","\x63\x75\x72\x72\x65\x6E\x74\x54\x69\x6D\x65","\x3C\x64\x69\x76\x20\x63\x6C\x61\x73\x73\x3D\x22\x66\x6F\x72\x6D\x2D\x67\x72\x6F\x75\x70\x20\x72\x6F\x77\x20\x73\x65\x67\x6D\x65\x6E\x74\x2D\x69\x6D\x70\x75\x74\x22\x3E","\x3C\x69\x6E\x70\x75\x74\x20\x74\x79\x70\x65\x3D\x22\x74\x65\x78\x74\x22\x20\x63\x6C\x61\x73\x73\x3D\x22\x63\x6F\x6C\x2D\x33\x20\x63\x6F\x6C\x2D\x66\x6F\x72\x6D\x2D\x6C\x61\x62\x65\x6C\x20\x63\x6F\x6C\x6F\x72\x20\x72\x65\x71\x75\x69\x72\x65\x64\x22\x20\x76\x61\x6C\x75\x65\x3D\x22","\x66\x69\x6C\x6C\x53\x74\x79\x6C\x65","\x22\x20\x73\x74\x79\x6C\x65\x3D\x22\x62\x61\x63\x6B\x67\x72\x6F\x75\x6E\x64\x2D\x63\x6F\x6C\x6F\x72\x3A","\x22\x3E","\x3C\x64\x69\x76\x20\x63\x6C\x61\x73\x73\x3D\x22\x63\x6F\x6C\x22\x3E","\x3C\x69\x6E\x70\x75\x74\x20\x74\x79\x70\x65\x3D\x22\x74\x65\x78\x74\x22\x20\x63\x6C\x61\x73\x73\x3D\x22\x66\x6F\x72\x6D\x2D\x63\x6F\x6E\x74\x72\x6F\x6C\x20\x63\x6F\x6C\x2D\x33\x20\x6E\x61\x6D\x65\x22\x20\x76\x61\x6C\x75\x65\x3D\x22","\x3C\x2F\x64\x69\x76\x3E","\x3C\x62\x75\x74\x74\x6F\x6E\x20\x63\x6C\x61\x73\x73\x3D\x22\x62\x74\x6E\x20\x62\x74\x6E\x2D\x64\x65\x6C\x65\x74\x65\x22\x3E\x58\x3C\x2F\x62\x75\x74\x74\x6F\x6E\x3E","\x23\x6F\x70\x74\x69\x6F\x6E\x73\x2D\x73\x65\x6C\x65\x63\x74","\x63\x6C\x69\x63\x6B","\x70\x72\x65\x76\x65\x6E\x74\x44\x65\x66\x61\x75\x6C\x74","\x23\x77\x68\x65\x65\x6C\x2D\x61\x72\x65\x61","\x73\x68\x6F\x77","\x6F\x6E","\x23\x73\x65\x74\x74\x69\x6E\x67\x57\x68\x65\x65\x6C","\x2E\x62\x74\x6E\x2D\x64\x65\x6C\x65\x74\x65","\x2E\x73\x65\x67\x6D\x65\x6E\x74\x2D\x69\x6D\x70\x75\x74","\x63\x6C\x6F\x73\x65\x73\x74","\x72\x65\x6D\x6F\x76\x65","\x62\x6F\x64\x79","\x23\x73\x65\x74\x74\x69\x6E\x67\x43\x61\x6E\x63\x65\x6C","\x23\x73\x65\x74\x74\x69\x6E\x67\x41\x64\x64","\x23","\x72\x61\x6E\x64\x6F\x6D","\x66\x6C\x6F\x6F\x72","\x3C\x69\x6E\x70\x75\x74\x20\x74\x79\x70\x65\x3D\x22\x74\x65\x78\x74\x22\x20\x63\x6C\x61\x73\x73\x3D\x22\x66\x6F\x72\x6D\x2D\x63\x6F\x6E\x74\x72\x6F\x6C\x20\x63\x6F\x6C\x2D\x33\x20\x6E\x61\x6D\x65\x22\x20\x76\x61\x6C\x75\x65\x3D\x22\x22\x3E","\x61\x70\x70\x65\x6E\x64","\x23\x73\x65\x74\x74\x69\x6E\x67\x53\x61\x76\x65","\x23\x6F\x70\x74\x69\x6F\x6E\x73\x2D\x73\x65\x6C\x65\x63\x74\x20\x2E\x73\x65\x67\x6D\x65\x6E\x74\x2D\x69\x6D\x70\x75\x74","\x76\x61\x6C\x75\x65","\x2E\x63\x6F\x6C\x6F\x72","\x66\x69\x6E\x64","\x6C\x6F\x67","\x2E\x6E\x61\x6D\x65","\x70\x75\x73\x68","\x53\x6F\x6D\x65\x20\x69\x6E\x70\x75\x74\x73\x20\x61\x72\x65\x20\x69\x6E\x76\x61\x6C\x69\x64","\x72\x65\x6C\x6F\x61\x64"];$(_0x8ed9[1])[_0x8ed9[0]]();var segments=[{'\x66\x69\x6C\x6C\x53\x74\x79\x6C\x65':_0x8ed9[2],'\x74\x65\x78\x74':_0x8ed9[3]},{'\x66\x69\x6C\x6C\x53\x74\x79\x6C\x65':_0x8ed9[4],'\x74\x65\x78\x74':_0x8ed9[5]},{'\x66\x69\x6C\x6C\x53\x74\x79\x6C\x65':_0x8ed9[6],'\x74\x65\x78\x74':_0x8ed9[7]},{'\x66\x69\x6C\x6C\x53\x74\x79\x6C\x65':_0x8ed9[8],'\x74\x65\x78\x74':_0x8ed9[9]},{'\x66\x69\x6C\x6C\x53\x74\x79\x6C\x65':_0x8ed9[2],'\x74\x65\x78\x74':_0x8ed9[10]},{'\x66\x69\x6C\x6C\x53\x74\x79\x6C\x65':_0x8ed9[4],'\x74\x65\x78\x74':_0x8ed9[11]},{'\x66\x69\x6C\x6C\x53\x74\x79\x6C\x65':_0x8ed9[6],'\x74\x65\x78\x74':_0x8ed9[12]},{'\x66\x69\x6C\x6C\x53\x74\x79\x6C\x65':_0x8ed9[8],'\x74\x65\x78\x74':_0x8ed9[13]}];var nhacsoso=document[_0x8ed9[15]](_0x8ed9[14]);var nhacchucmung=document[_0x8ed9[15]](_0x8ed9[16]);var smStore=localStorage[_0x8ed9[18]](_0x8ed9[17]);if(smStore){segments= JSON[_0x8ed9[19]](smStore)}else {localStorage[_0x8ed9[21]](_0x8ed9[17],JSON[_0x8ed9[20]](segments))};let theWheel= new Winwheel({'\x6E\x75\x6D\x53\x65\x67\x6D\x65\x6E\x74\x73':segments[_0x8ed9[22]],'\x6F\x75\x74\x65\x72\x52\x61\x64\x69\x75\x73':212,'\x74\x65\x78\x74\x46\x6F\x6E\x74\x53\x69\x7A\x65':15,'\x73\x65\x67\x6D\x65\x6E\x74\x73':segments,'\x61\x6E\x69\x6D\x61\x74\x69\x6F\x6E':{'\x74\x79\x70\x65':_0x8ed9[23],'\x64\x75\x72\x61\x74\x69\x6F\x6E':10,'\x73\x70\x69\x6E\x73':6,'\x63\x61\x6C\x6C\x62\x61\x63\x6B\x46\x69\x6E\x69\x73\x68\x65\x64':alertPrize}});let wheelPower=0;let wheelSpinning=false;function powerSelected(_0x24b7x9){if(wheelSpinning== false){document[_0x8ed9[15]](_0x8ed9[25])[_0x8ed9[24]]= _0x8ed9[26];document[_0x8ed9[15]](_0x8ed9[27])[_0x8ed9[24]]= _0x8ed9[26];document[_0x8ed9[15]](_0x8ed9[28])[_0x8ed9[24]]= _0x8ed9[26];if(_0x24b7x9>= 1){document[_0x8ed9[15]](_0x8ed9[25])[_0x8ed9[24]]= _0x8ed9[25]};if(_0x24b7x9>= 2){document[_0x8ed9[15]](_0x8ed9[27])[_0x8ed9[24]]= _0x8ed9[27]};if(_0x24b7x9>= 3){document[_0x8ed9[15]](_0x8ed9[28])[_0x8ed9[24]]= _0x8ed9[28]};wheelPower= _0x24b7x9;document[_0x8ed9[15]](_0x8ed9[30])[_0x8ed9[29]]= _0x8ed9[31];document[_0x8ed9[15]](_0x8ed9[30])[_0x8ed9[24]]= _0x8ed9[32]}}function startSpin(){if(wheelSpinning== false){nhacsoso[_0x8ed9[33]]();theWheel[_0x8ed9[35]][_0x8ed9[34]]= 8;if(wheelPower== 1){theWheel[_0x8ed9[35]][_0x8ed9[34]]= 3}else {if(wheelPower== 2){theWheel[_0x8ed9[35]][_0x8ed9[34]]= 8}else {if(wheelPower== 3){theWheel[_0x8ed9[35]][_0x8ed9[34]]= 15}}};document[_0x8ed9[15]](_0x8ed9[30])[_0x8ed9[36]]= _0x8ed9[37];theWheel[_0x8ed9[38]]();wheelSpinning= true;return};if(document[_0x8ed9[15]](_0x8ed9[30])[_0x8ed9[36]]== _0x8ed9[37]){resetWheel();return}}function resetWheel(){theWheel[_0x8ed9[39]](false);theWheel[_0x8ed9[40]]= 0;theWheel[_0x8ed9[41]]();document[_0x8ed9[15]](_0x8ed9[25])[_0x8ed9[24]]= _0x8ed9[26];document[_0x8ed9[15]](_0x8ed9[27])[_0x8ed9[24]]= _0x8ed9[26];document[_0x8ed9[15]](_0x8ed9[28])[_0x8ed9[24]]= _0x8ed9[26];document[_0x8ed9[15]](_0x8ed9[30])[_0x8ed9[36]]= _0x8ed9[31];wheelSpinning= false}function alertPrize(_0x24b7xd){swal(_0x24b7xd[_0x8ed9[42]],_0x8ed9[43]+ _0x24b7xd[_0x8ed9[42]]+ _0x8ed9[44],_0x8ed9[45]);nhacsoso[_0x8ed9[46]]();nhacsoso[_0x8ed9[47]]= 0;nhacchucmung[_0x8ed9[33]]();setTimeout(function(){nhacchucmung[_0x8ed9[46]]();nhacchucmung[_0x8ed9[47]]= 0},3000)}function settingRender(){var smStore=localStorage[_0x8ed9[18]](_0x8ed9[17]);var segments=JSON[_0x8ed9[19]](smStore);var _0x24b7xf=_0x8ed9[26];for(var _0x24b7x10=0;_0x24b7x10< segments[_0x8ed9[22]];_0x24b7x10++){_0x24b7xf+= _0x8ed9[48]+ _0x8ed9[49]+ segments[_0x24b7x10][_0x8ed9[50]]+ _0x8ed9[51]+ segments[_0x24b7x10][_0x8ed9[50]]+ _0x8ed9[52]+ _0x8ed9[53]+ _0x8ed9[54]+ segments[_0x24b7x10][_0x8ed9[42]]+ _0x8ed9[52]+ _0x8ed9[55]+ _0x8ed9[53]+ _0x8ed9[56]+ _0x8ed9[55]+ _0x8ed9[55]};$(_0x8ed9[57])[_0x8ed9[29]](_0x24b7xf)}settingRender();$(_0x8ed9[63])[_0x8ed9[62]](_0x8ed9[58],function(_0x24b7x11){_0x24b7x11[_0x8ed9[59]]();settingRender();$(_0x8ed9[60])[_0x8ed9[0]]();$(_0x8ed9[1])[_0x8ed9[61]]()});$(_0x8ed9[68])[_0x8ed9[62]](_0x8ed9[58],_0x8ed9[64],function(){var _0x24b7x12=$(this)[_0x8ed9[66]](_0x8ed9[65]);_0x24b7x12[_0x8ed9[67]]()});$(_0x8ed9[68])[_0x8ed9[62]](_0x8ed9[58],_0x8ed9[69],function(_0x24b7x11){_0x24b7x11[_0x8ed9[59]]();$(_0x8ed9[60])[_0x8ed9[61]]();$(_0x8ed9[1])[_0x8ed9[0]]()});$(_0x8ed9[68])[_0x8ed9[62]](_0x8ed9[58],_0x8ed9[70],function(_0x24b7x11){_0x24b7x11[_0x8ed9[59]]();var _0x24b7x13=_0x8ed9[71]+ Math[_0x8ed9[73]](Math[_0x8ed9[72]]()* 16777215).toString(16);var _0x24b7xf=_0x8ed9[48]+ _0x8ed9[49]+ _0x24b7x13+ _0x8ed9[51]+ _0x24b7x13+ _0x8ed9[52]+ _0x8ed9[53]+ _0x8ed9[74]+ _0x8ed9[55]+ _0x8ed9[53]+ _0x8ed9[56]+ _0x8ed9[55]+ _0x8ed9[55];$(_0x8ed9[57])[_0x8ed9[75]](_0x24b7xf)});$(_0x8ed9[68])[_0x8ed9[62]](_0x8ed9[58],_0x8ed9[76],function(_0x24b7x11){_0x24b7x11[_0x8ed9[59]]();var _0x24b7x14=$(_0x8ed9[77]);var segments=[];var _0x24b7x15=true;for(var _0x24b7x10=0;_0x24b7x10< _0x24b7x14[_0x8ed9[22]];_0x24b7x10++){console[_0x8ed9[81]]($(_0x24b7x14[_0x24b7x10])[_0x8ed9[80]](_0x8ed9[79])[0][_0x8ed9[78]]);var _0x24b7x16=$(_0x24b7x14[_0x24b7x10])[_0x8ed9[80]](_0x8ed9[79])[0][_0x8ed9[78]];var _0x24b7x17=$(_0x24b7x14[_0x24b7x10])[_0x8ed9[80]](_0x8ed9[82])[0][_0x8ed9[78]];if(_0x24b7x16[_0x8ed9[22]]== 0|| _0x24b7x17[_0x8ed9[22]]== 0){_0x24b7x15= false;break}else {segments[_0x8ed9[83]]({'\x66\x69\x6C\x6C\x53\x74\x79\x6C\x65':_0x24b7x16,'\x74\x65\x78\x74':_0x24b7x17})}};if(!_0x24b7x15){alert(_0x8ed9[84])}else {localStorage[_0x8ed9[21]](_0x8ed9[17],JSON[_0x8ed9[20]](segments));location[_0x8ed9[85]]()}})
+        </script>
+    </body>
+</html>
