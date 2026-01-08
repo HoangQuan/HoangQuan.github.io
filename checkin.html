@@ -85,7 +85,7 @@
             const base64Image = canvas.toDataURL('image/jpeg');
 
             try {
-                const response = await fetch('http://14.232.244.116:8001/verify', {
+                const response = await fetch('https://icitech.net/api_checkin.php?path=/verify', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ image: base64Image })
