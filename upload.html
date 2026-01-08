@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng Ký Nhân Viên Mới</title>
+    <style>
+        body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; background: #f0f2f5; padding: 20px; }
+        .card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
+        h2 { color: #1a73e8; text-align: center; margin-bottom: 20px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; }
+        input[type="text"], input[type="file"] { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background: #1a73e8; color: white; border: none; border-radius: 5px; font-size: 1rem; cursor: pointer; transition: background 0.3s; }
+        button:hover { background: #1557b0; }
+        #message { margin-top: 15px; text-align: center; font-weight: bold; }
+        .back-link { display: block; text-align: center; margin-top: 20px; color: #555; text-decoration: none; }
+        .back-link:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>Thêm Nhân Viên</h2>
+        <div class="form-group">
+            <label for="name">Tên nhân viên:</label>
+            <input type="text" id="name" placeholder="Ví dụ: Nguyen Van A" required>
+        </div>
+        <div class="form-group">
+            <label for="file">Ảnh khuôn mặt:</label>
+            <input type="file" id="file" accept="image/*" required>
+        </div>
+        <button onclick="uploadFace()">Lưu Thông Tin</button>
+        <div id="message"></div>
+        
+        <a href="index.html" class="back-link">← Quay lại chấm công</a>
+    </div>
+
+    <script>
+        async function uploadFace() {
+            const nameInput = document.getElementById('name');
+            const fileInput = document.getElementById('file');
+            const messageDiv = document.getElementById('message');
+
+            if (!nameInput.value || !fileInput.files[0]) {
+                messageDiv.innerText = "Vui lòng nhập tên và chọn ảnh!";
+                messageDiv.style.color = "red";
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('name', nameInput.value);
+            formData.append('file', fileInput.files[0]);
+
+            messageDiv.innerText = "Đang xử lý...";
+            messageDiv.style.color = "#1a73e8";
+
+            try {
+                // Lưu ý: Thay đổi IP nếu bạn không chạy trên localhost
+                const response = await fetch('http://14.232.244.116:8001/register', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    messageDiv.innerText = "✅ " + data.message;
+                    messageDiv.style.color = "green";
+                    // Reset form
+                    nameInput.value = '';
+                    fileInput.value = '';
+                } else {
+                    messageDiv.innerText = "❌ Lỗi: " + data.message;
+                    messageDiv.style.color = "red";
+                }
+            } catch (error) {
+                console.error(error);
+                messageDiv.innerText = "❌ Lỗi kết nối server!";
+                messageDiv.style.color = "red";
+            }
+        }
+    </script>
+</body>
+</html>
